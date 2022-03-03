@@ -11,6 +11,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "jisho.h"
 
 static element_t *new_element(const char *key, const char *value) {
@@ -24,6 +25,16 @@ static void delete_element(element_t *elem) {
   free(elem->key);
   free(elem->value);
   free(elem);
+}
+
+int jisho_hash(const char *s, const int seed, const int bucket_size) {
+  long hash = 0;
+  const size_t str_length = strlen(s);
+  for (int i = 0; i < str_length; i++) {
+    hash += (long)pow(seed, str_length - (i+1)) * s[i];
+    hash %= bucket_size;
+  }
+  return (int)hash;
 }
 
 map_t* jisho_new() {

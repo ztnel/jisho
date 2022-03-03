@@ -25,6 +25,7 @@ typedef struct {
 
 void jisho_delete(map_t *map);
 map_t* jisho_new();
+int jisho_hash(const char *s, const int seed, const int bucket_size);
 
 
 #endif  // JISHO_H_
