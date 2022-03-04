@@ -9,13 +9,22 @@
  * 
  */
 
+#include <stdlib.h>
 #include <stdio.h>
+#include <merase.h>
 #include <jisho.h>
 
-int main(int argc, char **argv) {
-  char *string = argv[1];
-  map_t *jisho = jisho_new();
+static map_t *jisho;
+
+static void _handler() {
   jisho_delete(jisho);
-  int hash = jisho_hash(string, 151, 53);
-  printf("Hash of %s is 0x%04x\n", string, hash);
+}
+
+int main(int argc, char **argv) {
+  merase_set_level(TRACE);
+  jisho = jisho_new();
+  atexit(_handler);
+  jisho_insert(jisho, "test", "key");
+  printf("Get: %s", jisho_get(jisho, "test"));
+  return EXIT_SUCCESS;
 }
