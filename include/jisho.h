@@ -12,6 +12,9 @@
 #ifndef JISHO_H_
 #define JISHO_H_
 
+#define PRIMARY_HASH_PRIME 131
+#define SECONDARY_HASH_PRIME 151
+
 typedef struct {
   char *key;
   char *value;
@@ -25,7 +28,9 @@ typedef struct {
 
 void jisho_delete(map_t *map);
 map_t* jisho_new();
-int jisho_hash(const char *s, const int seed, const int bucket_size);
+void jisho_insert(map_t *map, const char *key, const char *value);
+char *jisho_get(map_t *map, const char *key);
+// void jisho_remove(map_t *map, const char *key);
 
 
 #endif  // JISHO_H_
