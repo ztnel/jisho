@@ -17,6 +17,7 @@
 static map_t *jisho;
 
 static void _handler() {
+  info("Running cleanup");
   jisho_delete(jisho);
 }
 
@@ -25,6 +26,13 @@ int main(int argc, char **argv) {
   jisho = jisho_new();
   atexit(_handler);
   jisho_insert(jisho, "test", "key");
+  jisho_insert(jisho, "chris", "what");
+  jisho_insert(jisho, "josh", "hey");
+  jisho_insert(jisho, "test", "working?");
   printf("Get: %s", jisho_get(jisho, "test"));
+  printf("Get: %s", jisho_get(jisho, "chris"));
+  printf("Get: %s", jisho_get(jisho, "josh"));
+  jisho_remove(jisho, "josh");
+  printf("Get: %s", jisho_get(jisho, "josh"));
   return EXIT_SUCCESS;
 }
