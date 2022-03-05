@@ -27,8 +27,11 @@ static element_t *_new_element(const char *key, const char *value) {
 static void _delete_element(element_t *elem) {
   if (elem == NULL || elem == &_DELETED_ELEM)
     return;
+  trace("Freeing element key string: %s", elem->key);
   free(elem->key);
+  trace("Freeing element key value %s", elem->value);
   free(elem->value);
+  trace("Freeing element");
   free(elem);
 }
 
@@ -58,12 +61,16 @@ map_t* jisho_new() {
 }
 
 void jisho_delete(map_t *map) {
+  if (map == NULL)
+    return;
   for (int i = 0; i <  map->size; i++) {
     element_t *elem = map->elements[i];
-    if (elem != NULL)
+    if (elem != NULL && elem != &_DELETED_ELEM)
       _delete_element(elem);
   }
+  trace("Freeing map elements");
   free(map->elements);
+  trace("Freeing map");
   free(map);
 }
 
@@ -80,6 +87,7 @@ void jisho_insert(map_t *map, const char *key, const char *value) {
   map->elements[index] = new_elem;
   map->count++;
   trace("Index: %d Count: %d", index, map->count);
+  info("Inserted element: { %s: %s }", new_elem->key, new_elem->value);
 }
 
 char *jisho_get(map_t *map, const char *key) {
@@ -91,6 +99,7 @@ char *jisho_get(map_t *map, const char *key) {
     elem = map->elements[index];
     trace("Index: %d", index);
     if (elem != &_DELETED_ELEM && strcmp(elem->key, key) == 0)
+      info("Found element %s", key);
       return elem->value;
   } while (elem != NULL);
   return NULL;
@@ -102,9 +111,10 @@ void jisho_remove(map_t *map, const char *key) {
   int collisions = -1;
   element_t *elem;
   do {
-    index = _double_hash(elem->key, map->size, ++collisions);
+    index = _double_hash(key, map->size, ++collisions);
     elem = map->elements[index];
     if (elem != &_DELETED_ELEM && strcmp(elem->key, key) == 0) {
+      info("Deleting element: { %s: %s }", elem->key, elem->value);
       _delete_element(elem);
       map->elements[index] = &_DELETED_ELEM;
     }
