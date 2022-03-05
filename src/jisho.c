@@ -1,6 +1,6 @@
 /**
  * @file jisho.c
- * @author your name (you@domain.com)
+ * @author Christian Sargusingh
  * @brief 
  * @version 0.1
  * @date 2022-03
@@ -14,6 +14,8 @@
 #include <math.h>
 #include <merase.h>
 #include "jisho.h"
+
+static element_t _DELETED_ELEM = {NULL, NULL};
 
 static element_t *_new_element(const char *key, const char *value) {
   element_t *elem = malloc(sizeof(element_t));
@@ -71,7 +73,7 @@ void jisho_insert(map_t *map, const char *key, const char *value) {
   do {
     index = _double_hash(new_elem->key, map->size, ++collisions);
     old_elem = map->elements[index];
-  } while (old_elem != NULL);
+  } while (old_elem != NULL && old_elem != &_DELETED_ELEM);
   map->elements[index] = new_elem;
   map->count++;
   trace("Index: %d Count: %d", index, map->count);
@@ -85,8 +87,24 @@ char *jisho_get(map_t *map, const char *key) {
     index = _double_hash(key, map->size, ++collisions);
     elem = map->elements[index];
     trace("Index: %d", index);
-    if (strcmp(elem->key, key) == 0)
+    if (elem != &_DELETED_ELEM && strcmp(elem->key, key) == 0)
       return elem->value;
   } while (elem != NULL);
   return NULL;
+}
+
+
+void jisho_remove(map_t *map, const char *key) {
+  int index;
+  int collisions = -1;
+  element_t *elem;
+  do {
+    index = _double_hash(elem->key, map->size, ++collisions);
+    elem = map->elements[index];
+    if (elem != &_DELETED_ELEM && strcmp(elem->key, key) == 0) {
+      _delete_element(elem);
+      map->elements[index] = &_DELETED_ELEM;
+    }
+  } while (elem != NULL);
+  map->count--;
 }
