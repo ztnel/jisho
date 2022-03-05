@@ -30,7 +30,7 @@ void jisho_delete(map_t *map);
 map_t* jisho_new();
 void jisho_insert(map_t *map, const char *key, const char *value);
 char *jisho_get(map_t *map, const char *key);
-// void jisho_remove(map_t *map, const char *key);
+void jisho_remove(map_t *map, const char *key);
 
 
 #endif  // JISHO_H_
