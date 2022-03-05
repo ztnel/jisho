@@ -25,6 +25,8 @@ static element_t *_new_element(const char *key, const char *value) {
 }
 
 static void _delete_element(element_t *elem) {
+  if (elem == NULL || elem == &_DELETED_ELEM)
+    return;
   free(elem->key);
   free(elem->value);
   free(elem);
@@ -73,6 +75,7 @@ void jisho_insert(map_t *map, const char *key, const char *value) {
   do {
     index = _double_hash(new_elem->key, map->size, ++collisions);
     old_elem = map->elements[index];
+    _delete_element(old_elem);
   } while (old_elem != NULL && old_elem != &_DELETED_ELEM);
   map->elements[index] = new_elem;
   map->count++;
